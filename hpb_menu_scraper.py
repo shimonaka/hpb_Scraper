@@ -54,7 +54,10 @@ def scrape_hpb_menu(url):
             url += '/coupon/'
     
     try:
-        response = requests.get(url)
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+        }
+        response = requests.get(url, headers=headers)
         response.encoding = response.apparent_encoding
         if response.status_code != 200:
             print(f"Error: Failed to fetch page. Status code: {response.status_code}", file=sys.stderr)

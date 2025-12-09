@@ -63,16 +63,24 @@ def scrape_hpb_coupon(base_url, max_pages=10):
         print(f"Fetching: {target_url}", file=sys.stderr)
         
         try:
-            response = requests.get(target_url)
+            # Add User-Agent to mimic a real browser
+            headers = {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+            }
+            response = requests.get(target_url, headers=headers)
             response.encoding = response.apparent_encoding
+            
+            # Additional Logging for debugging
+            if response.status_code != 200:
+                print(f"Warning: Failed to fetch {target_url}. Status: {response.status_code}", file=sys.stderr)
+                # If blocked (403/503), this will show in logs
             
             # If page doesn't exist (e.g. 404), we stop
             if response.status_code == 404:
-                print("Page not found, stopping pagination.", file=sys.stderr)
+                print("Page not found (404), stopping pagination.", file=sys.stderr)
                 break
             
             if response.status_code != 200:
-                print(f"Error: Status code {response.status_code}", file=sys.stderr)
                 break
 
             soup = BeautifulSoup(response.text, 'html.parser')
